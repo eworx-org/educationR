@@ -1,0 +1,13 @@
+Package: educationR
+Title: Classify Multilingual Free-Text Related to Education to Standard Classifications
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Alexandros", "Kouretsis", email = "ako@eworx.gr", role = c("aut", "cre")),
+    person("Andreas", "Bampouris", email = "aba@eworx.gr", role = "aut")
+            )
+Description: Classify Multilingual Free-Text Related to Education to Standard Classifications
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
