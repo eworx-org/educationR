@@ -55,4 +55,4 @@ train_dat <- lapply(locales, function(loc) {
 
 eqf_feat_extr <- lapply(train_dat, function(dat)dat[["model"]])
 
-usethis::use_data(eqf_feat_extr, overwrite = TRUE, compress = "xz")
+usethis::use_data(eqf_feat_extr, internal = TRUE, overwrite = TRUE, compress = "xz")
