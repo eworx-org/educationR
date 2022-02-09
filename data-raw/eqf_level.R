@@ -46,6 +46,7 @@ train_dat <- lapply(locales, function(loc) {
   list(
     "emb" = embeddings,
     "model" = list(
+      "prep" = prep_fun,
       "vec" = vectorizer,
       "tfidf" = m_tfidf,
       "lsa" = m_lsa
