@@ -17,7 +17,7 @@ eqf_dat <- lapply(locales, function(loc) {
 
 # Split train-test
 train_test <- lapply(eqf_dat, function(dat) {
-  train <- sample(nrow(dat), split*nrow(dat))
+  train <- sample(nrow(dat), tr_split*nrow(dat))
   test <- setdiff(1:nrow(dat), train)
   list("train" = train, "test" = test)
 })
@@ -34,6 +34,7 @@ train_dat <- lapply(locales, function(loc) {
   dat <- eqf_dat[[loc]][train_test[[loc]][["train"]]]
   it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   
+  # Create embeddings
   vectorizer <- create_vocabulary(it, stopwords = stopwords(loc)) %>%
     prune_vocabulary(doc_proportion_max = 0.5, term_count_min = 50) %>%
     vocab_vectorizer()
@@ -45,12 +46,10 @@ train_dat <- lapply(locales, function(loc) {
   
   list(
     "emb" = embeddings,
-    "model" = list(
-      "prep" = prep_fun,
-      "vec" = vectorizer,
-      "tfidf" = m_tfidf,
-      "lsa" = m_lsa
-    )
+    "model" = list("prep" = prep_fun,
+                   "vec" = vectorizer,
+                   "tfidf" = m_tfidf,
+                   "lsa" = m_lsa)
   )
 }) %>% set_names(locales)
 
