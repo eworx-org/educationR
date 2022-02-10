@@ -2,6 +2,7 @@ library(data.table)
 library(magrittr)
 library(text2vec)
 library(stopwords)
+library(caret)
 
 # Settings
 set.seed(10)
@@ -32,6 +33,7 @@ prep_fun <- function(x) {
 
 train_dat <- lapply(locales, function(loc) {
   dat <- eqf_dat[[loc]][train_test[[loc]][["train"]]]
+  dat[, eqf := factor(eqf, levels = dat[, sort(unique(eqf))])]
   it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   
   # Create embeddings
@@ -44,8 +46,11 @@ train_dat <- lapply(locales, function(loc) {
     fit_transform(m_tfidf) %>%
     fit_transform(m_lsa)
   
+  # Balance data
+  train <- downSample(x = embeddings, y = dat[, eqf]) %>% setDT
+  
   list(
-    "emb" = embeddings,
+    "data" = train,
     "model" = list("prep" = prep_fun,
                    "vec" = vectorizer,
                    "tfidf" = m_tfidf,
