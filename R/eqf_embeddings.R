@@ -11,9 +11,9 @@
 #' eqf_embeddings("Bachelor of Science")
 #' eqf_embeddings(c("Master of Science", "PhD in Linguistics"), "en")
 eqf_embeddings <- function(x, locale = "en") {
-  x <- itoken(x, preprocessor = eqf_feat_extr[[locale]][["prep"]],
+  x <- itoken(x, preprocessor = eqf_model[[locale]][["prep"]],
               progressbar = FALSE)
-  x <- create_dtm(x, eqf_feat_extr[[locale]][["vec"]])
-  x <- transform(x, eqf_feat_extr[[locale]][["tfidf"]])
-  transform(x, eqf_feat_extr[[locale]][["lsa"]])
+  x <- create_dtm(x, eqf_model[[locale]][["vec"]])
+  x <- transform(x, eqf_model[[locale]][["tfidf"]])
+  transform(x, eqf_model[[locale]][["lsa"]])
 }
