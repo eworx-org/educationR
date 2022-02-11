@@ -3,6 +3,7 @@ library(magrittr)
 library(text2vec)
 library(stopwords)
 library(caret)
+library(glmnet)
 
 # Settings
 set.seed(10)
@@ -58,6 +59,21 @@ train_dat <- lapply(locales, function(loc) {
   )
 }) %>% set_names(locales)
 
-eqf_feat_extr <- lapply(train_dat, function(dat)dat[["model"]])
+# Train classifier
+m_glm <- lapply(train_dat, function(dat) {
+  train <- dat$data
+  train <- train[sample(nrow(train), 0.1*nrow(train))]
+  cv.glmnet(x = train[, -"Class"] %>% as.matrix,
+            y = train[, Class],
+            alpha = 1,
+            family = "multinomial",
+            type.measure = "auc",
+            parallel = TRUE,
+            nfolds = 4)
+})
 
-usethis::use_data(eqf_feat_extr, internal = TRUE, overwrite = TRUE, compress = "xz")
+eqf_model <- lapply(locales, function(loc) {
+  append(train_dat[[loc]][["model"]], list("model" = m_glm[[loc]]))
+}) %>% set_names(locales)
+
+usethis::use_data(eqf_model, internal = TRUE, overwrite = TRUE, compress = "xz")
