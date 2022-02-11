@@ -4,6 +4,7 @@ library(text2vec)
 library(stopwords)
 library(caret)
 library(glmnet)
+source("R/eqf_embeddings.R")
 
 # Settings
 set.seed(10)
@@ -25,13 +26,6 @@ train_test <- lapply(eqf_dat, function(dat) {
 })
 
 # Extract features
-prep_fun <- function(x) {
-  x <- tolower(x)
-  x <- gsub("\t", " ", x)
-  x <- gsub("[^[:alnum:][:space:]]", " ", x)
-  x <- trimws(x)
-}
-
 train_dat <- lapply(locales, function(loc) {
   dat <- eqf_dat[[loc]][train_test[[loc]][["train"]]]
   dat[, eqf := factor(eqf, levels = dat[, sort(unique(eqf))])]
