@@ -3,12 +3,15 @@ library(magrittr)
 library(text2vec)
 library(stopwords)
 library(caret)
+library(glmnet)
+source("R/eqf_embeddings.R")
+source("R/predict_eqf.R")
 
 # Settings
 set.seed(10)
 locales <- c("en", "it")
 tr_split <- 0.8
-n_dims <- 10
+n_dims <- 25
 
 # eqf_dat is a data.frame with labeled data and schema: locale, text, eqf
 eqf_dat <- readRDS("eqf_labeled_data.rds")
@@ -24,13 +27,6 @@ train_test <- lapply(eqf_dat, function(dat) {
 })
 
 # Extract features
-prep_fun <- function(x) {
-  x <- tolower(x)
-  x <- gsub("\t", " ", x)
-  x <- gsub("[^[:alnum:][:space:]]", " ", x)
-  x <- trimws(x)
-}
-
 train_dat <- lapply(locales, function(loc) {
   dat <- eqf_dat[[loc]][train_test[[loc]][["train"]]]
   dat[, eqf := factor(eqf, levels = dat[, sort(unique(eqf))])]
@@ -58,6 +54,36 @@ train_dat <- lapply(locales, function(loc) {
   )
 }) %>% set_names(locales)
 
-eqf_feat_extr <- lapply(train_dat, function(dat)dat[["model"]])
+# Train classifier
+m_glm <- lapply(train_dat, function(dat) {
+  train <- dat$data
+  train <- train[sample(nrow(train), 0.1*nrow(train))]
+  cv.glmnet(x = train[, -"Class"] %>% as.matrix,
+            y = train[, Class],
+            alpha = 1,
+            family = "multinomial",
+            type.measure = "auc",
+            parallel = TRUE,
+            nfolds = 4)
+})
 
-usethis::use_data(eqf_feat_extr, internal = TRUE, overwrite = TRUE, compress = "xz")
+eqf_model <- lapply(locales, function(loc) {
+  append(train_dat[[loc]][["model"]], list("model" = m_glm[[loc]]))
+}) %>% set_names(locales)
+
+# Test classifier
+test_dat <- lapply(locales, function(loc) {
+  test <- eqf_dat[[loc]][train_test[[loc]][["test"]]]
+  test[, eqf := factor(eqf, levels = test[, sort(unique(eqf))])]
+  test[, pred := predict_eqf(text, loc)]
+  # Produce confusion matrix
+  test[, .N, by = c("eqf", "pred")][order(eqf, pred)]
+}) %>% set_names(locales)
+
+for(loc in locales) {
+  test <- test_dat[[loc]][, .(count = sum(N)), by = .(pred == eqf)]
+  acc <- test[pred == TRUE, count / test[, sum(count)]]
+  print(paste0("Accuracy for locale '", loc, "': ", 100 * round(acc, 4), "%"))
+}
+
+usethis::use_data(eqf_model, internal = TRUE, overwrite = TRUE, compress = "xz")

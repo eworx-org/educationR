@@ -14,7 +14,8 @@ RoxygenNote: 7.1.2
 Depends: 
     R (>= 3.6.0)
 Imports:
-    text2vec
+    text2vec,
+    glmnet
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
