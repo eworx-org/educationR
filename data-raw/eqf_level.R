@@ -4,7 +4,7 @@ library(text2vec)
 library(stopwords)
 library(caret)
 library(glmnet)
-source("R/eqf_embeddings.R")
+source("R/feature_extraction.R")
 source("R/predict_eqf.R")
 
 # Settings
