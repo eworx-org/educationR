@@ -27,5 +27,5 @@ prep_fun <- function(x) {
   x <- tolower(x)
   x <- gsub("\t", " ", x)
   x <- gsub("[^[:alnum:][:space:]]", " ", x)
-  x <- trimws(x)
+  trimws(x)
 }
