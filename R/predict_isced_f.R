@@ -2,6 +2,7 @@
 #' 
 #' @param x A character vector of qualification titles.
 #' @param locale The ISO 639-1 code of the language used.
+#' @param target Target level and formatting of output ISCED-F level.
 #' 
 #' @return A factor of equal length to x with the predicted ISCED-F fields.
 #' @export
@@ -9,7 +10,7 @@
 #' @examples
 #' predict_isced_f("MSc in Biology")
 #' predict_isced_f(c("Law degree", "PhD in Linguistics"), "en")
-predict_isced_f <- function(x, locale = "en") {
+predict_isced_f <- function(x, locale = "en", target = "isced_3_label") {
   model <- models$isced$docs[[locale]][["model"]]
   it <- itoken(x, preprocessor = prep_fun, progressbar = FALSE)
   dtm <- create_dtm(it, model$vec)
@@ -17,5 +18,5 @@ predict_isced_f <- function(x, locale = "en") {
   docs <- models$isced$docs[[locale]][["tfidf"]]
   sim <- sim2(docs$stats, tfidf, method = "cosine", norm = "none")
   keys <- apply(sim, 2, function(x)docs$class[which(x == max(x))][1])
-  models$isced$class[match(keys, isced_3_key), isced_3_label]
+  models$isced$class[match(keys, isced_3_key)][[target]]
 }
