@@ -2,6 +2,7 @@ library(data.table)
 library(magrittr)
 library(glue)
 source("R/feature_extraction.R")
+source("R/predict_isced_f.R")
 load("R/sysdata.rda")
 
 # Settings
@@ -59,3 +60,17 @@ doc_tfidf <- lapply(locales, function(loc) {
 # Save internal data
 models["isced"] <- list(list("class" = isced_f$en, "docs" = doc_tfidf))
 usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
+
+# Test
+test_dat <- readRDS("foet_labeled_data.rds")
+isced_cor <- fread("data-raw/isced_2013_2011.csv", colClasses = "character")
+lapply(locales, function(loc) {
+  test <- test_dat[locale == loc]
+  test[, foet := substr(foet, 1, 1)]
+  test[, key_2013 := predict_isced_f(text, loc, "isced_1_key")]
+  test <- merge(test, isced_cor[, .(key_2013, pred = key_2011)], 
+                by = "key_2013")
+  test <- test[, .(count = .N), by = .(pred == foet)]
+  acc <- test[pred == TRUE, count / test[, sum(count)]]
+  print(paste0("Accuracy for locale '", loc, "': ", 100 * round(acc, 4), "%"))
+})

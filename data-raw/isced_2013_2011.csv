@@ -1,0 +1,13 @@
+key_2013,label_2013,key_2011,label_2011
+00,"generic programmes and qualifications",0,"general programmes"
+01,"education",1,"education"
+02,"arts and humanities",2,"humanities and arts"
+03,"social sciences, journalism and information",3,"social sciences, business and law"
+04,"business, administration and law",3,"social sciences, business and law"
+05,"natural sciences, mathematics and statistics",4,"science"
+06,"information and communication technologies (icts)",4,"science"
+07,"engineering, manufacturing and construction",5,"engineering, manufacturing and construction"
+08,"agriculture, forestry, fisheries and veterinary",6,"agriculture"
+09,"health and welfare",7,"health and welfare"
+10,"services",8,"services"
+99,"field unknown",9,"field unknown"
