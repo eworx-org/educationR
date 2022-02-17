@@ -11,7 +11,7 @@
 #' predict_eqf("Bachelor of Science")
 #' predict_eqf(c("Master of Science", "PhD in Linguistics"), "en")
 predict_eqf <- function(x, locale = "en") {
-  model <- eqf_model[[locale]][["model"]]
+  model <- models$eqf[[locale]][["model"]]
   emb <- eqf_embeddings(x, locale)
   pred <- predict(model, emb, type = "response")[, , 1]
   eqf_levels <- names(head(sort(-pred), 1))
