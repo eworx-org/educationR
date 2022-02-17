@@ -36,6 +36,30 @@ esco_corpus <- lapply(locales, function(loc) {
   corpus[order(code), .(code, text)]
 }) %>% set_names(locales)
 
+# Prepare model for document similarity comparison
+doc_tfidf <- lapply(locales, function(loc) {
+  dat <- rbind(esco_corpus[[loc]], 
+               isced_f[[loc]][, .(code = isced_3_key, text = isced_3_label)])
+  dat[, code := factor(code, levels = dat[, sort(unique(code))])]
+  
+  # Create tf-idf model
+  it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
+  vectorizer <- create_vocabulary(it, stopwords = stopwords(loc), ngram = c(1L, 2L)) %>%
+    prune_vocabulary(doc_proportion_max = 0.5, term_count_min = 1) %>%
+    vocab_vectorizer()
+  m_tfidf <- TfIdf$new()
+  tfidf <- create_dtm(it, vectorizer) %>% 
+    fit_transform(m_tfidf)
+  
+  list(
+    "tfidf" = list("stats" = tfidf, 
+                   "class" = dat[, code]),
+    "model" = list("prep" = prep_fun,
+                   "vec" = vectorizer,
+                   "tfidf" = m_tfidf)
+  )
+}) %>% set_names(locales)
+
 # Save internal data
-models["isced"] <- list(list("class" = isced_f$en))
+models["isced"] <- list(list("class" = isced_f$en, "docs" = doc_tfidf))
 usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
