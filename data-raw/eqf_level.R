@@ -6,6 +6,7 @@ library(caret)
 library(glmnet)
 source("R/feature_extraction.R")
 source("R/predict_eqf.R")
+load("R/sysdata.rda")
 
 # Settings
 set.seed(10)
@@ -67,10 +68,13 @@ m_glm <- lapply(train_dat, function(dat) {
             nfolds = 4)
 })
 
+# Save internal data
 eqf <- lapply(locales, function(loc) {
   append(train_dat[[loc]][["model"]], list("model" = m_glm[[loc]]))
 }) %>% set_names(locales)
-models <- list("eqf" = eqf)
+models["eqf"] <- list(eqf)
+
+usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
 
 # Test classifier
 test_dat <- lapply(locales, function(loc) {
@@ -86,5 +90,3 @@ for(loc in locales) {
   acc <- test[pred == TRUE, count / test[, sum(count)]]
   print(paste0("Accuracy for locale '", loc, "': ", 100 * round(acc, 4), "%"))
 }
-
-usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
