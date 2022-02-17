@@ -1,6 +1,7 @@
 library(data.table)
 library(magrittr)
 library(glue)
+source("R/feature_extraction.R")
 load("R/sysdata.rda")
 
 # Settings
@@ -51,13 +52,8 @@ doc_tfidf <- lapply(locales, function(loc) {
   tfidf <- create_dtm(it, vectorizer) %>% 
     fit_transform(m_tfidf)
   
-  list(
-    "tfidf" = list("stats" = tfidf, 
-                   "class" = dat[, code]),
-    "model" = list("prep" = prep_fun,
-                   "vec" = vectorizer,
-                   "tfidf" = m_tfidf)
-  )
+  list("tfidf" = list("stats" = tfidf, "class" = dat[, code]),
+       "model" = list("vec" = vectorizer, "tfidf" = m_tfidf))
 }) %>% set_names(locales)
 
 # Save internal data

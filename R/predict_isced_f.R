@@ -18,5 +18,6 @@ predict_isced_f <- function(x, locale = "en", target = "isced_3_label") {
   docs <- models$isced$docs[[locale]][["tfidf"]]
   sim <- sim2(docs$stats, tfidf, method = "cosine", norm = "none")
   keys <- apply(sim, 2, function(x)docs$class[which(x == max(x))][1])
-  models$isced$class[match(keys, isced_3_key)][[target]]
+  keys_match <- match(keys, models$isced$class$isced_3_key)
+  models$isced$class[keys_match, target]
 }
