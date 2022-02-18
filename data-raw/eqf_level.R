@@ -4,8 +4,9 @@ library(text2vec)
 library(stopwords)
 library(caret)
 library(glmnet)
-source("R/eqf_embeddings.R")
+source("R/feature_extraction.R")
 source("R/predict_eqf.R")
+load("R/sysdata.rda")
 
 # Settings
 set.seed(10)
@@ -30,9 +31,9 @@ train_test <- lapply(eqf_dat, function(dat) {
 train_dat <- lapply(locales, function(loc) {
   dat <- eqf_dat[[loc]][train_test[[loc]][["train"]]]
   dat[, eqf := factor(eqf, levels = dat[, sort(unique(eqf))])]
-  it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   
   # Create embeddings
+  it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   vectorizer <- create_vocabulary(it, stopwords = stopwords(loc)) %>%
     prune_vocabulary(doc_proportion_max = 0.5, term_count_min = 50) %>%
     vocab_vectorizer()
@@ -45,13 +46,8 @@ train_dat <- lapply(locales, function(loc) {
   # Balance data
   train <- downSample(x = embeddings, y = dat[, eqf]) %>% setDT
   
-  list(
-    "data" = train,
-    "model" = list("prep" = prep_fun,
-                   "vec" = vectorizer,
-                   "tfidf" = m_tfidf,
-                   "lsa" = m_lsa)
-  )
+  list("data" = train,
+       "model" = list("vec" = vectorizer, "tfidf" = m_tfidf, "lsa" = m_lsa))
 }) %>% set_names(locales)
 
 # Train classifier
@@ -67,9 +63,13 @@ m_glm <- lapply(train_dat, function(dat) {
             nfolds = 4)
 })
 
-eqf_model <- lapply(locales, function(loc) {
+# Save internal data
+eqf <- lapply(locales, function(loc) {
   append(train_dat[[loc]][["model"]], list("model" = m_glm[[loc]]))
 }) %>% set_names(locales)
+models["eqf"] <- list(eqf)
+
+usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
 
 # Test classifier
 test_dat <- lapply(locales, function(loc) {
@@ -85,5 +85,3 @@ for(loc in locales) {
   acc <- test[pred == TRUE, count / test[, sum(count)]]
   print(paste0("Accuracy for locale '", loc, "': ", 100 * round(acc, 4), "%"))
 }
-
-usethis::use_data(eqf_model, internal = TRUE, overwrite = TRUE, compress = "xz")

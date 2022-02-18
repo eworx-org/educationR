@@ -1,3 +1,5 @@
 .Rproj.user
-*.rds
 .Rhistory
+.DS_Store
+*.rds
+esco-bundle
