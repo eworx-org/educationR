@@ -1,5 +1,7 @@
 library(data.table)
 library(magrittr)
+library(text2vec)
+library(stopwords)
 library(glue)
 source("R/feature_extraction.R")
 source("R/predict_isced_f.R")
