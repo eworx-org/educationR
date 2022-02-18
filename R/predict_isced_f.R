@@ -9,7 +9,7 @@
 #' 
 #' @examples
 #' predict_isced_f("MSc in Biology")
-#' predict_isced_f(c("Law degree", "PhD in Linguistics"), "en")
+#' predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_1_key")
 predict_isced_f <- function(x, locale = "en", target = "isced_3_label") {
   model <- models$isced$docs[[locale]][["model"]]
   it <- itoken(x, preprocessor = prep_fun, progressbar = FALSE)
