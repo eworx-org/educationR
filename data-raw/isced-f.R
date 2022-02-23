@@ -10,6 +10,7 @@ load("R/sysdata.rda")
 # Settings
 locales <- c("en", "it")
 esco_v <- "1.0.8"
+doc_max <- 0.1
 
 # Tidyfy multilingual ISCED-F data
 isced_f <- lapply(locales, function(loc) {
@@ -49,7 +50,7 @@ doc_tfidf <- lapply(locales, function(loc) {
   # Create tf-idf model
   it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   vectorizer <- create_vocabulary(it, stopwords = stopwords(loc), ngram = c(1L, 2L)) %>%
-    prune_vocabulary(doc_proportion_max = 0.5, term_count_min = 1) %>%
+    prune_vocabulary(doc_proportion_max = doc_max, term_count_min = 1) %>%
     vocab_vectorizer()
   m_tfidf <- TfIdf$new()
   tfidf <- create_dtm(it, vectorizer) %>% 
