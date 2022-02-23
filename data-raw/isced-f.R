@@ -3,7 +3,7 @@ library(magrittr)
 library(text2vec)
 library(stopwords)
 library(glue)
-source("R/feature_extraction.R")
+source("R/utils.R")
 source("R/predict_isced_f.R")
 load("R/sysdata.rda")
 
