@@ -14,12 +14,12 @@ predict_isced_f(x, locale = "en", target = "isced_3_label")
 \item{target}{Target level and formatting of output ISCED-F level.}
 }
 \value{
-A factor of equal length to x with the predicted ISCED-F fields.
+A character vector of equal length to x with the predicted ISCED-F fields.
 }
 \description{
 Predict the ISCED-F field of a qualification title
 }
 \examples{
 predict_isced_f("MSc in Biology")
-predict_isced_f(c("Law degree", "PhD in Linguistics"), "en")
+predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_1_key")
 }
