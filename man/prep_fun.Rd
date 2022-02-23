@@ -4,13 +4,15 @@
 \alias{prep_fun}
 \title{Preprocess character vectors}
 \usage{
-prep_fun(x)
+prep_fun(x, num_max_char = 10L)
 }
 \arguments{
 \item{x}{A character vector.}
+
+\item{num_max_char}{An integer equal to the maximum number of characters per word desired, unless set to \code{NULL}.}
 }
 \value{
-Character vector with lower case alphanumeric text and trimmed white space.
+Character vector with lower case alphanumeric text, trimmed white space, and maximum number of characters per word.
 }
 \description{
 Preprocess character vectors
