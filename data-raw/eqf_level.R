@@ -17,7 +17,7 @@ doc_min <- 0.0005
 doc_max <- 0.5
 
 # eqf_dat is a data.frame with labeled data and schema: locale, text, eqf
-eqf_dat <- readRDS("eqf_labeled_data.rds")
+eqf_dat <- readRDS("data-raw/eqf_labeled_data.rds")
 eqf_dat <- lapply(locales, function(loc) {
   eqf_dat[locale == loc, .(text, eqf)]
 }) %>% set_names(locales)
