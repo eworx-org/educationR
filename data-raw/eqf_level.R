@@ -4,7 +4,7 @@ library(text2vec)
 library(stopwords)
 library(caret)
 library(glmnet)
-source("R/feature_extraction.R")
+source("R/utils.R")
 source("R/predict_eqf.R")
 load("R/sysdata.rda")
 
@@ -13,9 +13,11 @@ set.seed(10)
 locales <- c("en", "it")
 tr_split <- 0.8
 n_dims <- 25
+doc_min <- 0.0005
+doc_max <- 0.5
 
 # eqf_dat is a data.frame with labeled data and schema: locale, text, eqf
-eqf_dat <- readRDS("eqf_labeled_data.rds")
+eqf_dat <- readRDS("data-raw/eqf_labeled_data.rds")
 eqf_dat <- lapply(locales, function(loc) {
   eqf_dat[locale == loc, .(text, eqf)]
 }) %>% set_names(locales)
@@ -35,7 +37,7 @@ train_dat <- lapply(locales, function(loc) {
   # Create embeddings
   it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   vectorizer <- create_vocabulary(it, stopwords = stopwords(loc)) %>%
-    prune_vocabulary(doc_proportion_max = 0.5, term_count_min = 50) %>%
+    prune_vocabulary(doc_proportion_max = doc_max, doc_proportion_min = doc_min) %>%
     vocab_vectorizer()
   m_tfidf <- TfIdf$new()
   m_lsa <- LSA$new(n_topics = n_dims)

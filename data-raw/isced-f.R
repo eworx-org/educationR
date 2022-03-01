@@ -3,17 +3,18 @@ library(magrittr)
 library(text2vec)
 library(stopwords)
 library(glue)
-source("R/feature_extraction.R")
+source("R/utils.R")
 source("R/predict_isced_f.R")
 load("R/sysdata.rda")
 
 # Settings
 locales <- c("en", "it")
 esco_v <- "1.0.8"
+doc_max <- 0.1
 
 # Tidyfy multilingual ISCED-F data
 isced_f <- lapply(locales, function(loc) {
-  esco <- fread(glue("esco-bundle/v{esco_v}/skillGroups_{loc}.csv"))
+  esco <- fread(glue("data-raw/esco-bundle/v{esco_v}/skillGroups_{loc}.csv"))
   esco <- esco[grep("isced-f", conceptUri)]
   esco <- esco[, .(code = gsub(".*isced-f/", "", conceptUri), 
                    label = preferredLabel)]
@@ -29,8 +30,8 @@ isced_f <- lapply(locales, function(loc) {
 
 # Enhance corpus with associated ESCO skills
 esco_corpus <- lapply(locales, function(loc) {
-  broad <- fread(glue("esco-bundle/v{esco_v}/broaderRelationsSkillPillar.csv"))
-  skills <- fread(glue("esco-bundle/v{esco_v}/skills_{loc}.csv"))
+  broad <- fread(glue("data-raw/esco-bundle/v{esco_v}/broaderRelationsSkillPillar.csv"))
+  skills <- fread(glue("data-raw/esco-bundle/v{esco_v}/skills_{loc}.csv"))
   
   broad <- broad[grep("isced-f", broaderUri), 
                  .(code = gsub(".*isced-f/", "", broaderUri), conceptUri)]
@@ -49,7 +50,7 @@ doc_tfidf <- lapply(locales, function(loc) {
   # Create tf-idf model
   it <- itoken(dat[, text], preprocessor = prep_fun, progressbar = FALSE)
   vectorizer <- create_vocabulary(it, stopwords = stopwords(loc), ngram = c(1L, 2L)) %>%
-    prune_vocabulary(doc_proportion_max = 0.5, term_count_min = 1) %>%
+    prune_vocabulary(doc_proportion_max = doc_max, term_count_min = 1) %>%
     vocab_vectorizer()
   m_tfidf <- TfIdf$new()
   tfidf <- create_dtm(it, vectorizer) %>% 
@@ -64,7 +65,7 @@ models["isced"] <- list(list("class" = isced_f$en, "docs" = doc_tfidf))
 usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
 
 # Test
-test_dat <- readRDS("foet_labeled_data.rds")
+test_dat <- readRDS("data-raw/foet_labeled_data.rds")
 isced_cor <- fread("data-raw/isced_2013_2011.csv", colClasses = "character")
 lapply(locales, function(loc) {
   test <- test_dat[locale == loc]
