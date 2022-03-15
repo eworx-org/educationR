@@ -6,8 +6,8 @@ test_that("output length is the same as input length", {
 })
 
 test_that("predictions for some typical qualifications are correct", {
-  x <- c("Bachelor's degree", "Master's degree", "PhD")
-  exp <- factor(c("6", "7", "8"), level = as.character(1:8))
+  x <- c("Bachelor's degree", "Master's degree", "PhD", "gibberish123asdf")
+  exp <- factor(c("6", "7", "8", NA), level = as.character(1:8))
   res <- predict_eqf(x)
   expect_equal(res, exp)
 })
