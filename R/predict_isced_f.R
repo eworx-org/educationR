@@ -22,7 +22,10 @@ predict_isced_f <- function(x, locale = "en", target = "isced_3_label", top_docs
   sims <- sim2(docs$stats, y, method = "cosine", norm = "none")
   # Return character vector of ISCED-F fields if top_docs is NULL
   if(is.null(top_docs)) {
-    keys <- apply(sims, 2, function(z) docs$class[which(z == max(z))[1]])
+    keys <- apply(sims, 2, function(z) {
+      if(max(z) == 0) return(NA)
+      as.character(docs$class[which(z == max(z))[1]])
+    })
     keys_match <- match(keys, models$isced$class[["isced_3_key"]])
     res <- models$isced$class[keys_match,][[target]]
     return(res)
