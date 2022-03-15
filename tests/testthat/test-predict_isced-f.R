@@ -5,6 +5,13 @@ test_that("output length is the same as input length", {
   expect_equal(res, exp)
 })
 
+test_that("class of output is a list of top_docs is not NULL", {
+  x <- "Biology"
+  exp <- "list"
+  res <- class(predict_isced_f(x, top_docs = 10L))
+  expect_equal(res, exp)
+})
+
 test_that("predictions for some explicitly typed qualifications are correct", {
   x <- c("Biology", "Mathematics", "Law")
   exp <- c("biological and related sciences", "mathematics and statistics", "law")

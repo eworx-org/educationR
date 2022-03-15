@@ -4,7 +4,7 @@
 \alias{predict_isced_f}
 \title{Predict the ISCED-F field of a qualification title}
 \usage{
-predict_isced_f(x, locale = "en", target = "isced_3_label")
+predict_isced_f(x, locale = "en", target = "isced_3_label", top_docs = NULL)
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
@@ -12,14 +12,16 @@ predict_isced_f(x, locale = "en", target = "isced_3_label")
 \item{locale}{The ISO 639-1 code of the language used.}
 
 \item{target}{Target level and formatting of output ISCED-F level.}
+
+\item{top_docs}{Maximum number of ISCED-F fields returned per qualification title.}
 }
 \value{
-A character vector of equal length to x with the predicted ISCED-F fields.
+If \code{top_docs} is \code{NULL}, a character vector of equal length to x with the predicted ISCED-F fields. Otherwise, a list of data frames with the top matched documents sorted by similarity.
 }
 \description{
 Predict the ISCED-F field of a qualification title
 }
 \examples{
-predict_isced_f("MSc in Biology")
+predict_isced_f("MSc in Biology", top_docs = 10L)
 predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_1_key")
 }
