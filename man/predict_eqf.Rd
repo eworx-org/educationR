@@ -4,7 +4,7 @@
 \alias{predict_eqf}
 \title{Predict the EQF level of a qualification title}
 \usage{
-predict_eqf(x, locale = "en", na_threshold = 0.25)
+predict_eqf(x, locale = NULL, na_threshold = 0.25)
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
