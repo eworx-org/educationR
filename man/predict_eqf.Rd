@@ -4,15 +4,17 @@
 \alias{predict_eqf}
 \title{Predict the EQF level of a qualification title}
 \usage{
-predict_eqf(x, locale = "en")
+predict_eqf(x, locale = NULL, na_threshold = 0.25)
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
 
 \item{locale}{The ISO 639-1 code of the language used.}
+
+\item{na_threshold}{Threshold for EQF level prediction score.}
 }
 \value{
-A factor of equal length to x with the predicted EQF levels.
+If \code{na_threshold} is not \code{NULL}, a factor of equal length to x with the predicted EQF levels. Otherwise, a matrix with as many rows as length of x and scores for each EQF level.
 }
 \description{
 Predict the EQF level of a qualification title

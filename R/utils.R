@@ -20,3 +20,25 @@ prep_fun <- function(x, num_max_char = 5L, keep = TRUE) {
   }
   res
 }
+
+#' List available languages for EQF prediction
+#' 
+#' @return Character vector with ISO 639-1 codes of languages supported for EQF prediction.
+#' @export
+#' 
+#' @examples
+#' get_languages_eqf()
+get_languages_eqf <- function() {
+  names(models[["eqf"]])
+}
+
+#' List available languages for ISCED-F prediction
+#'
+#' @return Character vector with ISO 639-1 codes of languages supported for ISCED-F prediction.
+#' @export
+#' 
+#' @examples
+#' get_languages_isced_f()
+get_languages_isced_f <- function() {
+  names(models[["isced"]][["docs"]])
+}

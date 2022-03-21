@@ -74,16 +74,9 @@ models["eqf"] <- list(eqf)
 usethis::use_data(models, internal = TRUE, overwrite = TRUE, compress = "xz")
 
 # Test classifier
-test_dat <- lapply(locales, function(loc) {
+confusion_mat <- lapply(locales, function(loc) {
   test <- eqf_dat[[loc]][train_test[[loc]][["test"]]]
   test[, eqf := factor(eqf, levels = test[, sort(unique(eqf))])]
-  test[, pred := predict_eqf(text, loc)]
-  # Produce confusion matrix
-  test[, .N, by = c("eqf", "pred")][order(eqf, pred)]
+  test[, pred := predict_eqf(text, loc, na_threshold = 0)]
+  confusionMatrix(table(test[["eqf"]], test[["pred"]]))
 }) %>% set_names(locales)
-
-for(loc in locales) {
-  test <- test_dat[[loc]][, .(count = sum(N)), by = .(pred == eqf)]
-  acc <- test[pred == TRUE, count / test[, sum(count)]]
-  print(paste0("Accuracy for locale '", loc, "': ", 100 * round(acc, 4), "%"))
-}
