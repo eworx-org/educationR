@@ -1,18 +1,18 @@
-#' Predict the ISCED-F field of a qualification title
+#' Match qualification title with ISCED fields
 #' 
 #' @param x A character vector of qualification titles.
 #' @param locale The ISO 639-1 code of the language used.
 #' @param target Target level and formatting of output ISCED-F level.
 #' @param top_docs Maximum number of ISCED-F fields returned per qualification title.
 #' 
-#' @return If `top_docs` is `NULL`, a character vector of equal length to x with the predicted ISCED-F fields. Otherwise, a list of data frames with the top matched documents sorted by similarity.
+#' @return A list of data frames with the top matched documents sorted by similarity.
 #' @import text2vec
 #' @export
 #' 
 #' @examples
 #' predict_isced_f("MSc in Biology", top_docs = 10L)
 #' predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_2_key")
-predict_isced_f <- function(x, locale = "en", target = "isced_4_label", top_docs = NULL) {
+predict_isced_f <- function(x, locale = "en", target = "isced_4_label", top_docs = 5) {
   # Apply transformations
   y <- itoken(x, preprocessor = prep_fun, progressbar = FALSE)
   y <- create_dtm(y, models$isced$docs[[locale]][["model"]][["vec"]])
@@ -20,16 +20,6 @@ predict_isced_f <- function(x, locale = "en", target = "isced_4_label", top_docs
   # Calculate similarity with documents
   docs <- models$isced$docs[[locale]][["tfidf"]]
   sims <- sim2(docs$stats, y, method = "cosine", norm = "none")
-  # Return character vector of ISCED-F fields if top_docs is NULL
-  if(is.null(top_docs)) {
-    keys <- apply(sims, 2, function(z) {
-      if(max(z) == 0) return(NA)
-      as.character(docs$class[which(z == max(z))[1]])
-    })
-    keys_match <- match(keys, models$isced$class[["isced_4_key"]])
-    res <- models$isced$class[keys_match,][[target]]
-    return(res)
-  }
   # Return list of data.frames otherwise
   res <- apply(sims, 2, function(sim) {
     sim <- sim[sim > 0]
@@ -42,4 +32,25 @@ predict_isced_f <- function(x, locale = "en", target = "isced_4_label", top_docs
   })
   names(res) <- x
   res
+}
+
+#' Get the top matched ISCED field for a qualification title
+#' 
+#' @param x A character vector of qualification titles.
+#' @param locale The ISO 639-1 code of the language used.
+#' @param target Target level and formatting of output ISCED-F level.
+#' @param top_docs Maximum number of ISCED-F fields returned per qualification title.
+#' 
+#' @return A character vector of equal length to x with the top matched ISCED fields.
+#' @export
+#' 
+#' @examples
+#' isced_field("MSc in Biology", top_docs = 10L)
+#' isced_field(c("Law degree", "PhD in Linguistics"), "en", "isced_2_key")
+isced_field <- function(x, locale = "en", target = "isced_4_label", top_docs = 5) {
+  preds <- predict_isced_f(x, locale, target, top_docs)
+  fields <- lapply(preds, function(pred) {
+    pred[1, target]
+  })
+  unname(unlist(fields))
 }

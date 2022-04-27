@@ -2,9 +2,9 @@
 % Please edit documentation in R/predict_isced_f.R
 \name{predict_isced_f}
 \alias{predict_isced_f}
-\title{Predict the ISCED-F field of a qualification title}
+\title{Match qualification title with ISCED fields}
 \usage{
-predict_isced_f(x, locale = "en", target = "isced_3_label", top_docs = NULL)
+predict_isced_f(x, locale = "en", target = "isced_4_label", top_docs = 5)
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
@@ -16,12 +16,12 @@ predict_isced_f(x, locale = "en", target = "isced_3_label", top_docs = NULL)
 \item{top_docs}{Maximum number of ISCED-F fields returned per qualification title.}
 }
 \value{
-If \code{top_docs} is \code{NULL}, a character vector of equal length to x with the predicted ISCED-F fields. Otherwise, a list of data frames with the top matched documents sorted by similarity.
+A list of data frames with the top matched documents sorted by similarity.
 }
 \description{
-Predict the ISCED-F field of a qualification title
+Match qualification title with ISCED fields
 }
 \examples{
 predict_isced_f("MSc in Biology", top_docs = 10L)
-predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_1_key")
+predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_2_key")
 }

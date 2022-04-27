@@ -1,7 +1,7 @@
 test_that("output length is the same as input length", {
   x <- c("Law degree", "PhD in Linguistics")
   exp <- length(x)
-  res <- length(predict_isced_f(x))
+  res <- length(isced_field(x))
   expect_equal(res, exp)
 })
 
@@ -15,6 +15,6 @@ test_that("class of output is a list of top_docs is not NULL", {
 test_that("predictions for some explicitly typed qualifications are correct", {
   x <- c("Biology", "Mathematics", "Law", "gibberish123asdf")
   exp <- c("biological and related sciences", "mathematics and statistics", "law", NA)
-  res <- predict_isced_f(x, "en", "isced_3_label")
+  res <- isced_field(x, "en", "isced_3_label")
   expect_equal(res, exp)
 })
