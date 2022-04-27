@@ -15,6 +15,6 @@ test_that("class of output is a list of top_docs is not NULL", {
 test_that("predictions for some explicitly typed qualifications are correct", {
   x <- c("Biology", "Mathematics", "Law", "gibberish123asdf")
   exp <- c("biological and related sciences", "mathematics and statistics", "law", NA)
-  res <- predict_isced_f(x, "en", "isced_2_label")
+  res <- predict_isced_f(x, "en", "isced_3_label")
   expect_equal(res, exp)
 })

@@ -11,8 +11,8 @@
 #' 
 #' @examples
 #' predict_isced_f("MSc in Biology", top_docs = 10L)
-#' predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_1_key")
-predict_isced_f <- function(x, locale = "en", target = "isced_3_label", top_docs = NULL) {
+#' predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_2_key")
+predict_isced_f <- function(x, locale = "en", target = "isced_4_label", top_docs = NULL) {
   # Apply transformations
   y <- itoken(x, preprocessor = prep_fun, progressbar = FALSE)
   y <- create_dtm(y, models$isced$docs[[locale]][["model"]][["vec"]])
@@ -26,7 +26,7 @@ predict_isced_f <- function(x, locale = "en", target = "isced_3_label", top_docs
       if(max(z) == 0) return(NA)
       as.character(docs$class[which(z == max(z))[1]])
     })
-    keys_match <- match(keys, models$isced$class[["isced_3_key"]])
+    keys_match <- match(keys, models$isced$class[["isced_4_key"]])
     res <- models$isced$class[keys_match,][[target]]
     return(res)
   }
@@ -36,7 +36,7 @@ predict_isced_f <- function(x, locale = "en", target = "isced_3_label", top_docs
     sim <- head(sort(sim, decreasing = TRUE), top_docs)
     sim <- data.frame(code = docs$class[as.integer(names(sim))], sim)
     # Match top N documents with their associated ISCED-F field
-    keys_match <- match(sim[["code"]], models$isced$class[["isced_3_key"]])
+    keys_match <- match(sim[["code"]], models$isced$class[["isced_4_key"]])
     sim[[target]] <- models$isced$class[keys_match,][[target]]
     sim[, c(target, "sim")]
   })
