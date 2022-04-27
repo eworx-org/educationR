@@ -15,7 +15,7 @@ isced_field(x, locale = "en", digits = 4, code = FALSE, top_docs = 5)
 
 \item{code}{Whether the results should be in the form of codes or labels.}
 
-\item{top_docs}{Maximum number of ISCED-F fields returned per qualification title.}
+\item{top_docs}{Number of top documents matched considered in matching.}
 }
 \value{
 A character vector of equal length to x with the top matched ISCED fields.

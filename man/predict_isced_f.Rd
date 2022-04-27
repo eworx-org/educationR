@@ -13,7 +13,7 @@ predict_isced_f(x, locale = "en", digits = 4, top_docs = 5)
 
 \item{digits}{Number of digits of the field codes (2, 3, or 4). Determines target level of the ISCED-F hierarchy.}
 
-\item{top_docs}{Maximum number of ISCED-F fields returned per qualification title.}
+\item{top_docs}{Number of top documents matched considered in matching.}
 }
 \value{
 A list of data frames with the top matched documents sorted by similarity.

@@ -3,7 +3,7 @@
 #' @param x A character vector of qualification titles.
 #' @param locale The ISO 639-1 code of the language used.
 #' @param digits Number of digits of the field codes (2, 3, or 4). Determines target level of the ISCED-F hierarchy.
-#' @param top_docs Maximum number of ISCED-F fields returned per qualification title.
+#' @param top_docs Number of top documents matched considered in matching.
 #' 
 #' @return A list of data frames with the top matched documents sorted by similarity.
 #' @import text2vec
@@ -25,10 +25,14 @@ predict_isced_f <- function(x, locale = "en", digits = 4, top_docs = 5) {
     sim <- sim[sim > 0]
     sim <- head(sort(sim, decreasing = TRUE), top_docs)
     sim <- data.frame(code = docs$class[as.integer(names(sim))], sim)
+    sim$code <- substr(as.character(sim$code), 1, digits)
+    if(nrow(sim) > 0) {
+      sim <- aggregate(sim ~ code, sim, sum)
+      sim <- sim[order(sim$sim, decreasing = TRUE),]
+    }
     # Match top N documents with their associated ISCED-F field
-    keys_match <- match(sim[["code"]], models$isced$class[["isced_4_key"]])
     target_key <- paste0("isced_", digits, "_key")
-    sim[["code"]] <- models$isced$class[keys_match,][[target_key]]
+    keys_match <- match(sim[["code"]], models$isced$class[[target_key]])
     target_label <- paste0("isced_", digits, "_label")
     sim[["label"]] <- models$isced$class[keys_match,][[target_label]]
     sim[, c("code", "label", "sim")]
@@ -43,7 +47,7 @@ predict_isced_f <- function(x, locale = "en", digits = 4, top_docs = 5) {
 #' @param locale The ISO 639-1 code of the language used.
 #' @param digits Number of digits of the field codes (2, 3, or 4). Determines target level of the ISCED-F hierarchy.
 #' @param code Whether the results should be in the form of codes or labels.
-#' @param top_docs Maximum number of ISCED-F fields returned per qualification title.
+#' @param top_docs Number of top documents matched considered in matching.
 #' 
 #' @return A character vector of equal length to x with the top matched ISCED fields.
 #' @export
