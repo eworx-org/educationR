@@ -82,7 +82,7 @@ isced_cor <- fread("data-raw/isced_2013_2011.csv", colClasses = "character")
 confusion_mat <- lapply(locales, function(loc) {
   test <- test_dat[locale == loc]
   test[, foet := substr(foet, 1, 1)]
-  test[, key_2013 := isced_field(text, loc, "isced_2_key")]
+  test[, key_2013 := isced_field(text, loc, 2, code = TRUE)]
   test <- merge(test, isced_cor[, .(key_2013, pred = key_2011)], 
                 by = "key_2013")
   confusionMatrix(table(test[["pred"]], test[["foet"]]))

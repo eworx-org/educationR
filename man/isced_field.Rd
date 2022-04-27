@@ -4,14 +4,16 @@
 \alias{isced_field}
 \title{Get the top matched ISCED field for a qualification title}
 \usage{
-isced_field(x, locale = "en", target = "isced_4_label", top_docs = 5)
+isced_field(x, locale = "en", digits = 4, code = FALSE, top_docs = 5)
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
 
 \item{locale}{The ISO 639-1 code of the language used.}
 
-\item{target}{Target level and formatting of output ISCED-F level.}
+\item{digits}{Number of digits of the field codes (2, 3, or 4). Determines target level of the ISCED-F hierarchy.}
+
+\item{code}{Whether the results should be in the form of codes or labels.}
 
 \item{top_docs}{Maximum number of ISCED-F fields returned per qualification title.}
 }
@@ -23,5 +25,5 @@ Get the top matched ISCED field for a qualification title
 }
 \examples{
 isced_field("MSc in Biology", top_docs = 10L)
-isced_field(c("Law degree", "PhD in Linguistics"), "en", "isced_2_key")
+isced_field(c("Law degree", "PhD in Linguistics"), "en", 2, TRUE)
 }

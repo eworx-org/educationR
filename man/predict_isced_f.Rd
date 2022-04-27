@@ -4,14 +4,14 @@
 \alias{predict_isced_f}
 \title{Match qualification title with ISCED fields}
 \usage{
-predict_isced_f(x, locale = "en", target = "isced_4_label", top_docs = 5)
+predict_isced_f(x, locale = "en", digits = 4, top_docs = 5)
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
 
 \item{locale}{The ISO 639-1 code of the language used.}
 
-\item{target}{Target level and formatting of output ISCED-F level.}
+\item{digits}{Number of digits of the field codes (2, 3, or 4). Determines target level of the ISCED-F hierarchy.}
 
 \item{top_docs}{Maximum number of ISCED-F fields returned per qualification title.}
 }
@@ -23,5 +23,5 @@ Match qualification title with ISCED fields
 }
 \examples{
 predict_isced_f("MSc in Biology", top_docs = 10L)
-predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", "isced_2_key")
+predict_isced_f(c("Law degree", "PhD in Linguistics"), "en", 2)
 }

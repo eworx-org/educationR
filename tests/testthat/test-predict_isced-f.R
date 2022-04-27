@@ -12,9 +12,16 @@ test_that("class of output is a list of top_docs is not NULL", {
   expect_equal(res, exp)
 })
 
-test_that("predictions for some explicitly typed qualifications are correct", {
+test_that("labels for some explicitly typed qualifications are correct", {
   x <- c("Biology", "Mathematics", "Law", "gibberish123asdf")
   exp <- c("biological and related sciences", "mathematics and statistics", "law", NA)
-  res <- isced_field(x, "en", "isced_3_label")
+  res <- isced_field(x, "en", 3)
+  expect_equal(res, exp)
+})
+
+test_that("codes for some explicitly typed qualifications are correct", {
+  x <- c("Biology", "Mathematics", "Law", "gibberish123asdf")
+  exp <- c("05", "05", "04", NA)
+  res <- isced_field(x, "en", 2, code = TRUE)
   expect_equal(res, exp)
 })
