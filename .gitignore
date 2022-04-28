@@ -3,3 +3,4 @@
 .DS_Store
 *.rds
 esco-bundle
+inst/doc
