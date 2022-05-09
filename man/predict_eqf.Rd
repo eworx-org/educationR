@@ -2,22 +2,20 @@
 % Please edit documentation in R/predict_eqf.R
 \name{predict_eqf}
 \alias{predict_eqf}
-\title{Predict the EQF level of a qualification title}
+\title{Classify qualification titles with respect to EQF level}
 \usage{
-predict_eqf(x, locale = NULL, na_threshold = 0.25)
+predict_eqf(x, locale = get_languages_eqf())
 }
 \arguments{
 \item{x}{A character vector of qualification titles.}
 
-\item{locale}{The ISO 639-1 code of the language used.}
-
-\item{na_threshold}{Threshold for EQF level prediction score.}
+\item{locale}{The ISO 639-1 code of the language used. If a character vector with multiple codes is provided, the final prediction will be the average of predictions across those languages.}
 }
 \value{
-If \code{na_threshold} is not \code{NULL}, a factor of equal length to x with the predicted EQF levels. Otherwise, a matrix with as many rows as length of x and scores for each EQF level.
+A matrix with as many rows as length of x and scores for each EQF level.
 }
 \description{
-Predict the EQF level of a qualification title
+Classify qualification titles with respect to EQF level
 }
 \examples{
 predict_eqf("Bachelor of Science")
